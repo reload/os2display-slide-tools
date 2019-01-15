@@ -1,0 +1,10 @@
+{
+  "name": "reload/os2display-slide-tools",
+  "description": "TODO",
+  "type": "symfony-bundle",
+  "autoload": {
+    "psr-4": {
+      "Reload\\Os2DisplaySlideTools\\": ""
+    }
+  }
+}
