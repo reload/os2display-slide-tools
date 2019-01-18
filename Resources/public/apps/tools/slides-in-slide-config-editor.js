@@ -14,6 +14,6 @@ angular.module('toolsModule').directive('slidesInSlides', function(){
         var options = $scope.ikSlide.options;
         $scope.sisBoxHeight = false;
         $scope.sisBoxScale = '1';
-        $scope.sisSubslidesPrSlide = options.sis_subslides_pr_slide;
+        $scope.sisSubslidesPrSlide = options.sis_items_pr_slide;
     }
 }]);

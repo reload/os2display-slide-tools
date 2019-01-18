@@ -34,7 +34,7 @@ class SlidesInSlideDataCron {
 
 
       $slideEvent = new SlidesInSlideEvent($slidesInSlide);
-      $subscriberName = 'os2displayslidetools.subslidedata.' . $slidesInSlide->getOption('data_service');
+      $subscriberName = 'os2displayslidetools.sis_cron.' . $slidesInSlide->getOption('sis_cron_subscriber');
       $subslides = $this->container->get('event_dispatcher')->dispatch($subscriberName, $slideEvent)->getSubsSlides();
 
       if (!is_array($subslides)) {
@@ -43,12 +43,12 @@ class SlidesInSlideDataCron {
       }
 
 
-      $subslidesPrSlide = $slidesInSlide->getOption('sis_subslides_pr_slide', 3);
+      $subslidesPrSlide = $slidesInSlide->getOption('sis_items_pr_slide', 3);
       try {
         $slide->setExternalData([
           'sis_slides' => array_chunk($subslides, $subslidesPrSlide),
           'sis_num_slides' => count($subslides),
-          'sis_subslides_pr_slide' => $subslidesPrSlide,
+          'sis_items_pr_slide' => $subslidesPrSlide,
         ]);
         // Write to the db.
         $entityManager = $this->container->get('doctrine')->getManager();
