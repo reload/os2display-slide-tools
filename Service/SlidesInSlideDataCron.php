@@ -44,7 +44,7 @@ class SlidesInSlideDataCron {
 
 
       $subslidesPrSlide = $slidesInSlide->getOption('sis_items_pr_slide', 3);
-      $slides = array_chunk($subslides, $subslidesPrSlide);
+      $slides = ($subslidesPrSlide > 1) ? array_chunk($subslides, $subslidesPrSlide) : $subslides;
       try {
         $slide->setExternalData([
           'sis_data_slides' => $slides,
