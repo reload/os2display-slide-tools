@@ -1,6 +1,14 @@
-modules:
-  tools:
-    files:
-      - bundles/os2displayslidetools/apps/tools/slides-in-slide-config-editor.js
+assets:
+  js_prod:
+    - bundles/os2displayslidetools/dist/slide-tools.min.js
 
-apps:
+modules:
+  slidesInSlide:
+    dependencies:
+      - toolsModule
+    # Please don't add more files here. Add it in the gulpfile so it gets
+    # compiled into the slide-tools.min.js. The reason is that Os2Display
+    # include different files on prod and dev and we are trying to minimize
+    # errors by keeping it consistent.
+    files:
+      - bundles/os2displayslidetools/dist/slide-tools.min.js

@@ -20,10 +20,17 @@ class SlidesInSlide
   public function getOption($key, $defaultValue = false)
   {
     $options = $this->slide->getOptions();
+
     if (empty($options[$key])) {
       return $defaultValue;
     }
     return $options[$key];
+  }
+
+  public function setOption($key, $value) {
+    $options = $this->slide->getOptions();
+    $options[$key] = $value;
+    $this->slide->setOptions($options);
   }
 
   public function getSubslides()
