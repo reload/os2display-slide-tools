@@ -1,5 +1,4 @@
 Os2Display Slide Tools
-===
 
 Tools for working with slides for [https://github.com/os2display](https://github.com/os2display) The tools are meant to help with slides that have "slides within". It is not meant to replace the slide advancer in Os2Display, but it can allow a slide setup once by a person to have as many sub-slides as needed.
 
@@ -22,14 +21,26 @@ In your [custom bundle](https://github.com/os2display/docs/blob/master/guideline
 
 To take advantage of the tools in this repo you need to do a couple of things in your `.json` file:
 
-- In the `empty_options` part of the config, add the following (with your own values of course).
+- In the `empty_options` part of the config, add the following defaults (with your own values of course).
 
   ```json
+    "empty_options": {
       "sis_cron_subscriber": "your_cron_key",
       "sis_subslide_duration": 10,
-      "sis_total_items": 12,
+      "sis_total_items": 9,
       "sis_items_pr_slide": 1
+    }
   ```
+
+* If you want the user to be able to adjust these values, add the tool from this library in the `tools` part:
+
+```javascript
+    "tools": [   {
+        "name": "Slides in slides",
+        "id": "slides-in-slide-config-editor"
+      }
+    ]
+```
 
 The `.js`-file you link to in `paths.js` in the `.json.` file can take advantage of the sub-slide-advancing in this tool.
 
