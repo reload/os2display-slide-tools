@@ -1,4 +1,4 @@
-Os2Display Slide Tools
+# Os2Display Slide Tools
 
 Tools for working with slides for [https://github.com/os2display](https://github.com/os2display) The tools are meant to help with slides that have "slides within". It is not meant to replace the slide advancer in Os2Display, but it can allow a slide setup once by a person to have as many sub-slides as needed.
 
