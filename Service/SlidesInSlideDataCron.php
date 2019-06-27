@@ -3,8 +3,10 @@
 namespace Reload\Os2DisplaySlideTools\Service;
 
 use Os2Display\CoreBundle\Events\CronEvent;
+use Psr\Log\LoggerInterface;
 use Reload\Os2DisplaySlideTools\Slides\SlidesInSlide;
 use Reload\Os2DisplaySlideTools\Events\SlidesInSlideEvent;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class SlidesInSlideDataCron {
 
@@ -17,10 +19,10 @@ class SlidesInSlideDataCron {
    */
   private $container;
 
-  public function __construct($container)
+  public function __construct(ContainerInterface $container, LoggerInterface $logger)
   {
     $this->container = $container;
-    $this->logger = $this->container->get('logger');
+    $this->logger = $logger;
   }
 
   public function onCron(CronEvent $event)
