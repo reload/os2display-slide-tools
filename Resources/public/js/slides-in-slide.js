@@ -85,10 +85,8 @@ if (!window.slidesInSlides.run) {
 
     if (slide.data.num_subslides === 0) {
       // We're empty, advance to the next (real) slide right away.
-      region.$timeout(function () {
-        console.log('no subslides, continuing straight away');
-        region.nextSlide();
-      }, 0);
+      console.log("no subslides, continuing straight away");
+      region.nextSlide();
       return;
     }
 
