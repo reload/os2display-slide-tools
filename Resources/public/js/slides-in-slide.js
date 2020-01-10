@@ -83,6 +83,15 @@ if (!window.slidesInSlides.run) {
     // reset slide-count.
     slide.data.currentSlide = 0;
 
+    if (slide.data.num_subslides === 0) {
+      // We're empty, advance to the next (real) slide right away.
+      region.$timeout(function () {
+        console.log('no subslides, continuing straight away');
+        region.nextSlide();
+      }, 0);
+      return;
+    }
+
     // Trigger initial sleep and subsequent advance of slide.
     eventSlideTimeout();
 
