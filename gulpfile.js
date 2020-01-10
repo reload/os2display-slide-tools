@@ -1,9 +1,6 @@
-/* jshint node: true */
-"use strict";
-
 const gulp = require("gulp");
 const concat = require("gulp-concat");
-const uglify = require("gulp-uglify");
+const uglify = require("gulp-uglify-es").default;
 
 const jsBuildDir = "Resources/public/dist";
 const toolsDir = "Resources/public/apps/tools";

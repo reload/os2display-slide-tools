@@ -44,9 +44,8 @@ class SlidesInSlideDataCron {
         continue;
       }
 
-      if (count($subslides) < 1) {
+      if (empty($subslides)) {
         $this->logger->addError("Found no data for slide with id: " . $slide->getId());
-        continue;
       }
 
       $subslidesPrSlide = $slidesInSlide->getOption('sis_items_pr_slide', 3);
