@@ -1,7 +1,7 @@
 /**
  * This file does not do anything on its own.
- * 
- * To use it, include it in your build before your own slide setup and run 
+ *
+ * To use it, include it in your build before your own slide setup and run
  * functions.
  */
 if (!window.slidesInSlides) {
@@ -84,9 +84,11 @@ if (!window.slidesInSlides.run) {
     slide.data.currentSlide = 0;
 
     if (slide.data.num_subslides === 0) {
-      // We're empty, advance to the next (real) slide right away.
-      console.log("no subslides, continuing straight away");
-      region.nextSlide();
+      region.$timeout(function() {
+        // We're empty, advance to the next (real) slide right away.
+        console.log("no subslides, continuing straight away");
+        region.nextSlide();
+      }, 1000);
       return;
     }
 
