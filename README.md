@@ -2,9 +2,10 @@
 
 Tools for working with slides for [https://github.com/os2display](https://github.com/os2display) The tools are meant to help with slides that have "slides within". It is not meant to replace the slide advancer in Os2Display, but it can allow a slide setup once by a person to have as many sub-slides as needed.
 
-The idea is that a slide will have a number of "data items". That could be a list of events for instance. Each event would be a data item. The slide can have any number of subslides that displays a number of data items. The variables here are the settings available:
+The idea is that a slide will have a number of "data items". That could be a list of events for instance. Each event would be a data item. The slide can have any number of subslides that displays a number of data items.
 
 ### Config variables
+The variables here are the settings available on slides (in the `[slidename].json` file:
 
 | Variable name           |                                                              |
 | ----------------------- | ------------------------------------------------------------ |
@@ -12,8 +13,14 @@ The idea is that a slide will have a number of "data items". That could be a lis
 | `sis_items_pr_slide`    | How many data items should be displayed on each subslide.    |
 | `sis_subslide_duration` | How long should each subslide be displayed.                  |
 | `sis_cron_subscriber`   | Identifier to use if you want your slide type to fetch data on cron. |
+| `sis_data_ttl_minutes`   | How many minutes between data fetches for the slide type. Defaults to 5 minutes. |
 
-
+In `config.yml` these settings are available:
+```yml
+os2_display_slide_tools:
+    use_ttl: true
+```
+`use_ttl` determines if there should be a wait between fetching data for the slides. It's set to `false` by default.
 
 ## Creating a new slide type
 
@@ -28,7 +35,8 @@ To take advantage of the tools in this repo you need to do a couple of things in
       "sis_cron_subscriber": "your_cron_key",
       "sis_subslide_duration": 10,
       "sis_total_items": 9,
-      "sis_items_pr_slide": 1
+      "sis_items_pr_slide": 1,
+      "sis_data_ttl_minutes": 5
     }
   ```
 

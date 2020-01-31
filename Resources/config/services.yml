@@ -1,7 +1,8 @@
 services:
   _defaults:
     autowire: true
-  reload.ddbos2display:
+  os2display.slidesInSlidesCron:
     class: Reload\Os2DisplaySlideTools\Service\SlidesInSlideDataCron
+    arguments: ['@doctrine.orm.entity_manager', '@event_dispatcher', '@logger', false]
     tags:
       - { name: kernel.event_listener, event: ik.cron, method: onCron }
