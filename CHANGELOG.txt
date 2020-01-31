@@ -1,0 +1,6 @@
+Changelog
+===
+
+## v1.0.8 - January 30. 2020
+* Added an option to use a time to live for data fetching.
+* Stopped using the container in the constructor.
