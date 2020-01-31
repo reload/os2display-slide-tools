@@ -13,7 +13,7 @@ The variables here are the settings available on slides (in the `[slidename].jso
 | `sis_items_pr_slide`    | How many data items should be displayed on each subslide.    |
 | `sis_subslide_duration` | How long should each subslide be displayed.                  |
 | `sis_cron_subscriber`   | Identifier to use if you want your slide type to fetch data on cron. |
-| `sis_data_ttl_minutes`   | How many minutes between data fetches for the slide type. Defaults to 5 minutes. |
+| `sis_data_ttl_minutes`   | How many minutes between data fetches for the slide type. Defaults to 10 minutes. |
 
 In `config.yml` these settings are available:
 ```yml

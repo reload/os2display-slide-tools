@@ -95,7 +95,7 @@ class SlidesInSlideDataCron {
    * @return bool
    */
   private function shouldFetchData(SlidesInSlide $slidesInSlide) {
-    $dataTtlMinutes = $slidesInSlide->getOption('sis_data_ttl_minutes', 5);
+    $dataTtlMinutes = $slidesInSlide->getOption('sis_data_ttl_minutes', 10);
     // If TTL is disabled or the TTL is set to 0 on a slide, then always fetch
     // data.
     if (!$this->useTtl || empty($dataTtlMinutes)) {
