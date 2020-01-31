@@ -2,42 +2,63 @@
 
 namespace Reload\Os2DisplaySlideTools\Service;
 
+use Doctrine\ORM\EntityManager;
 use Os2Display\CoreBundle\Events\CronEvent;
 use Psr\Log\LoggerInterface;
-use Reload\Os2DisplaySlideTools\Slides\SlidesInSlide;
 use Reload\Os2DisplaySlideTools\Events\SlidesInSlideEvent;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Reload\Os2DisplaySlideTools\Slides\SlidesInSlide;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SlidesInSlideDataCron {
 
   /**
-   * @var \Symfony\Bridge\Monolog\Logger $logger
+   * @var \Doctrine\ORM\EntityManager $entityManager
+   */
+  private $entityManager;
+
+  /**
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  private $dispatcher;
+
+  /**
+   * @var \Psr\Log\LoggerInterface $logger
    */
   private $logger;
-  /**
-   * @var \Symfony\Component\DependencyInjection\ContainerInterface $container
-   */
-  private $container;
 
-  public function __construct(ContainerInterface $container, LoggerInterface $logger)
+  /**
+   * Whether or not to use a time to live for external data on slides.
+   *
+   * @var bool $useTtl
+   */
+  private $useTtl;
+
+  public function __construct(EntityManager $entityManager, EventDispatcherInterface $dispatcher, LoggerInterface $logger, $useTtl)
   {
-    $this->container = $container;
+    $this->entityManager = $entityManager;
+    $this->dispatcher = $dispatcher;
     $this->logger = $logger;
+    $this->useTtl = $useTtl;
   }
 
   public function onCron(CronEvent $event)
   {
-    $slideRepo = $this->container->get('doctrine')->getRepository('Os2DisplayCoreBundle:Slide');
-    $slidesOurType = $slideRepo->findBySlideType('slides-in-slide');
+    $slidesOurType = $this->entityManager
+      ->getRepository('Os2DisplayCoreBundle:Slide')
+      ->findBySlideType('slides-in-slide');
 
+    /** @var \Os2Display\CoreBundle\Entity\Slide $slide */
     foreach ($slidesOurType as $slide) {
 
       $slidesInSlide = new SlidesInSlide($slide);
 
+      if (!$this->shouldFetchData($slidesInSlide)) {
+        continue;
+      }
 
       $slideEvent = new SlidesInSlideEvent($slidesInSlide);
       $subscriberName = 'os2displayslidetools.sis_cron.' . $slidesInSlide->getOption('sis_cron_subscriber');
-      $subslides = $this->container->get('event_dispatcher')->dispatch($subscriberName, $slideEvent)->getSubSlides();
+      $subslides = $this->dispatcher->dispatch($subscriberName, $slideEvent)->getSubSlides();
 
       if (!is_array($subslides)) {
         $this->logger->addError("Couldn't find event subscriber for : " . $subscriberName);
@@ -56,13 +77,36 @@ class SlidesInSlideDataCron {
           'sis_data_num_slides' => count($slides),
           'sis_data_items_pr_slide' => $subslidesPrSlide,
         ]);
+        // Note when we fetched the data.
+        $slidesInSlide->setOption('sis_data_last_fetch', time());
         // Write to the db.
-        $entityManager = $this->container->get('doctrine')->getManager();
-        $entityManager->flush();
+        $this->entityManager->flush();
       } catch (\Exception $O_o) {
         $this->logger->error('An error occured trying save data on slides in slide: ' . $O_o->getMessage());
       }
     }
+  }
+
+  /**
+   * Check if it is necessary to fetch fresh data for the slide.
+   *
+   * @param \Reload\Os2DisplaySlideTools\Slides\SlidesInSlide $slidesInSlide
+   *
+   * @return bool
+   */
+  private function shouldFetchData(SlidesInSlide $slidesInSlide) {
+    $dataTtlMinutes = $slidesInSlide->getOption('sis_data_ttl_minutes', 10);
+    // If TTL is disabled or the TTL is set to 0 on a slide, then always fetch
+    // data.
+    if (!$this->useTtl || empty($dataTtlMinutes)) {
+      return true;
+    }
+
+    $lastFetch = $slidesInSlide->getOption('sis_data_last_fetch', 0);
+    $now = time();
+    $dataTtl = $dataTtlMinutes * 60;
+
+    return $now > ($lastFetch + $dataTtl);
   }
   
 }

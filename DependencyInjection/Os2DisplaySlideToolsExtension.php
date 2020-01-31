@@ -24,5 +24,13 @@ class Os2DisplaySlideToolsExtension extends Os2DisplayBaseExtension
     $this->dir = __DIR__;
 
     parent::load($configs, $container);
+
+    $configuration = new Configuration();
+    $config = $this->processConfiguration($configuration, $configs);
+
+    $def = $container->getDefinition('os2display.slidesInSlidesCron');
+    // Override the default "false" on the cron runner for a TTL with the
+    // config settings.
+    $def->replaceArgument(3, $config['use_ttl']);
   }
 }
