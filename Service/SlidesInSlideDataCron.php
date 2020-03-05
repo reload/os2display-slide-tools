@@ -91,6 +91,7 @@ class SlidesInSlideDataCron {
   /**
    * Check if it is necessary to fetch fresh data for the slide.
    *
+   * @param Slide $slide
    *
    * @return bool
    */
