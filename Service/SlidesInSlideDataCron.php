@@ -3,6 +3,7 @@
 namespace Reload\Os2DisplaySlideTools\Service;
 
 use Doctrine\ORM\EntityManager;
+use Os2Display\CoreBundle\Entity\Slide;
 use Os2Display\CoreBundle\Events\CronEvent;
 use Psr\Log\LoggerInterface;
 use Reload\Os2DisplaySlideTools\Events\SlidesInSlideEvent;
@@ -52,7 +53,7 @@ class SlidesInSlideDataCron {
 
       $slidesInSlide = new SlidesInSlide($slide);
 
-      if (!$this->shouldFetchData($slidesInSlide)) {
+      if (!$this->shouldFetchData($slide)) {
         continue;
       }
 
@@ -90,19 +91,25 @@ class SlidesInSlideDataCron {
   /**
    * Check if it is necessary to fetch fresh data for the slide.
    *
-   * @param \Reload\Os2DisplaySlideTools\Slides\SlidesInSlide $slidesInSlide
    *
    * @return bool
    */
-  private function shouldFetchData(SlidesInSlide $slidesInSlide) {
-    $dataTtlMinutes = $slidesInSlide->getOption('sis_data_ttl_minutes', 10);
+  private function shouldFetchData(Slide $slide) {
+    $options = $slide->getOptions();
+
+    $dataTtlMinutes = $options['sis_data_ttl_minutes'] ?? 10;
     // If TTL is disabled or the TTL is set to 0 on a slide, then always fetch
     // data.
     if (!$this->useTtl || empty($dataTtlMinutes)) {
       return true;
     }
 
-    $lastFetch = $slidesInSlide->getOption('sis_data_last_fetch', 0);
+    $lastFetch = $options['sis_data_last_fetch'] ?? 0;
+    // If the slide has just been saved, then fetch data again.
+    if ($slide->getModifiedAt() > $lastFetch) {
+      return true;
+    }
+
     $now = time();
     $dataTtl = $dataTtlMinutes * 60;
 
