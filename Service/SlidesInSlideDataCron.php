@@ -51,6 +51,12 @@ class SlidesInSlideDataCron {
     /** @var \Os2Display\CoreBundle\Entity\Slide $slide */
     foreach ($slidesOurType as $slide) {
 
+      /**
+       * We are running into issues, when we try to fetch data for more than ~20 slides concurrently. 
+       * This issued is cause by some security precautions from the external webserver. Therefore, 
+       * we added a tiny sleep delay between each call.
+       */
+      sleep(0.5);
       $slidesInSlide = new SlidesInSlide($slide);
 
       if (!$this->shouldFetchData($slide)) {
