@@ -57,6 +57,8 @@ class SlidesInSlideDataCron {
        * we added a tiny sleep delay between each call.
        */
       sleep(0.5);
+      echo "\nID: {$slide->getId()} ---------------------------------------------------------------------- \n";
+
       $slidesInSlide = new SlidesInSlide($slide);
 
       if (!$this->shouldFetchData($slide)) {
