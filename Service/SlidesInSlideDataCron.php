@@ -52,12 +52,14 @@ class SlidesInSlideDataCron {
     foreach ($slidesOurType as $slide) {
 
       /**
-       * We are running into issues, when we try to fetch data for more than ~20 slides concurrently. 
-       * This issued is cause by some security precautions from the external webserver. Therefore, 
-       * we added a tiny sleep delay between each call.
+       * We are running into issues, when we try to fetch data for more than ~25 slides in quick succession
+       * during a cron run. This issued is specifically caused by the kk.dk multisite system which drops 
+       * connections in such situations - probably to protect against DDoS attacks.
+       * To avoid triggering this we added a tiny sleep delay between each call. It may not be the most 
+       * efficient solution but it works for now.
        */
       sleep(0.5);
-      echo "\nID: {$slide->getId()} ---------------------------------------------------------------------- \n";
+      $this->logger->addInfo("\nID: {$slide->getId()} ---------------------------------------------------------------------- \n");
 
       $slidesInSlide = new SlidesInSlide($slide);
 
