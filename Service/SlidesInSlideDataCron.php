@@ -51,6 +51,16 @@ class SlidesInSlideDataCron {
     /** @var \Os2Display\CoreBundle\Entity\Slide $slide */
     foreach ($slidesOurType as $slide) {
 
+      /**
+       * We are running into issues, when we try to fetch data for more than ~25 slides in quick succession
+       * during a cron run. This issued is specifically caused by the kk.dk multisite system which drops 
+       * connections in such situations - probably to protect against DDoS attacks.
+       * To avoid triggering this we added a tiny sleep delay between each call. It may not be the most 
+       * efficient solution but it works for now.
+       */
+      sleep(0.5);
+      $this->logger->addInfo("\nID: {$slide->getId()} ---------------------------------------------------------------------- \n");
+
       $slidesInSlide = new SlidesInSlide($slide);
 
       if (!$this->shouldFetchData($slide)) {
