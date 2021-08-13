@@ -53,9 +53,9 @@ class SlidesInSlideDataCron {
 
       /**
        * We are running into issues, when we try to fetch data for more than ~25 slides in quick succession
-       * during a cron run. This issued is specifically caused by the kk.dk multisite system which drops 
+       * during a cron run. This issued is specifically caused by the kk.dk multisite system which drops
        * connections in such situations - probably to protect against DDoS attacks.
-       * To avoid triggering this we added a tiny sleep delay between each call. It may not be the most 
+       * To avoid triggering this we added a tiny sleep delay between each call. It may not be the most
        * efficient solution but it works for now.
        */
       sleep(0.5);
@@ -69,7 +69,19 @@ class SlidesInSlideDataCron {
 
       $slideEvent = new SlidesInSlideEvent($slidesInSlide);
       $subscriberName = 'os2displayslidetools.sis_cron.' . $slidesInSlide->getOption('sis_cron_subscriber');
-      $subslides = $this->dispatcher->dispatch($subscriberName, $slideEvent)->getSubSlides();
+
+      $subslides = [];
+      // Fetch subslides by delegating the actual business implementation done
+      // in the concrete slides cron listeners.
+      // OS2Display core halts any cron-processing if an exception escapes from
+      // a cron worker, so we catch and log anything that escapes.
+      try {
+        $subslides = $this->dispatcher->dispatch($subscriberName, $slideEvent)->getSubSlides();
+      }
+      catch (\Exception $e) {
+        $this->logger->error('An error occurred trying to fetch subslides for slide ' . $slide->getId() . ': ' . $e->getMessage());
+        continue;
+      }
 
       if (!is_array($subslides)) {
         $this->logger->addError("Couldn't find event subscriber for : " . $subscriberName);
@@ -126,5 +138,5 @@ class SlidesInSlideDataCron {
 
     return $now > ($lastFetch + $dataTtl);
   }
-  
+
 }
