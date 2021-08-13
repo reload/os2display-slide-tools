@@ -69,7 +69,19 @@ class SlidesInSlideDataCron {
 
       $slideEvent = new SlidesInSlideEvent($slidesInSlide);
       $subscriberName = 'os2displayslidetools.sis_cron.' . $slidesInSlide->getOption('sis_cron_subscriber');
-      $subslides = $this->dispatcher->dispatch($subscriberName, $slideEvent)->getSubSlides();
+
+      $subslides = [];
+      // Fetch subslides by delegating the actual business implementation done
+      // in the concrete slides cron listeners.
+      // OS2Display core halts any cron-processing if an exception escapes from
+      // a cron worker, so we catch and log anything that escapes.
+      try {
+        $subslides = $this->dispatcher->dispatch($subscriberName, $slideEvent)->getSubSlides();
+      }
+      catch (\Exception $e) {
+        $this->logger->error('An error occurred trying to fetch subslides for slide ' . $slide->getId() . ': ' . $e->getMessage());
+        continue;
+      }
 
       if (!is_array($subslides)) {
         $this->logger->addError("Couldn't find event subscriber for : " . $subscriberName);
